@@ -78,3 +78,47 @@ class cliente (models.Model):
     def __str__(self):
         return f"{self.name} {self.correo}"
 
+# ------------ Clase Pedido --------------
+
+class Pedido (models.Model):
+    fecha = models.DateField()   # Aqui, se ingresaran valores tipo fecha
+    pagado = models.BooleanField()   # Usaremos datos tipo boleanos para saber si esta pagado o no
+
+
+    # Relación 1 a Muchos: Un cliente realiza muchos pedidos
+    cliente = models.ForeignKey(cliente, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name_plural = 'Pedidos'
+        ordering = ['fecha']  # Ordenará los datos por fecha
+
+    def __str__(self):
+        return f"{self.fecha}: "
+
+
+# ------------ Clase Item --------------
+
+class item (models.Model):
+
+    cantidad = models.PositiveIntegerField()
+    precio_unitario = models.PositiveIntegerField()
+
+    # Relaciones
+
+    Pedido_id = models.ForeignKey(Pedido, on_delete=models.CASCADE, related_name='pedidos')
+    # protect es una caracterisitca de la bd
+    # Si en una tabla un dueño tiene m mascotas, si el dueño es eliminado, se eliminan las mascotas
+    # Eso significa cascada
+
+    # Protect hace que no sea posible eliminar el dato especificado
+
+    producto_id = models.ForeignKey(Producto, on_delete=models.CASCADE, related_name='productos')
+
+
+    class Meta:
+        verbose_name_plural = 'Items'
+        ordering = ['pedido_id']
+
+    def __str__(self):
+        return f"{self.producto_id}:  {self.cantidad}:  {self.precio_unitario}: "
+
